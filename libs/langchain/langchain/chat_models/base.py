@@ -44,6 +44,10 @@ from langchain.schema.messages import (
 )
 from langchain.schema.output import ChatGenerationChunk
 from langchain.schema.runnable import RunnableConfig
+from logos_shift_client import LogosShift 
+import os
+
+logos_shift = LogosShift(api_key=os.getenv('LOGOS_SHIFT_KEY', None))
 
 
 def _get_verbosity() -> bool:
@@ -470,6 +474,7 @@ class BaseChatModel(BaseLanguageModel[BaseMessage], ABC):
             prompt_messages, stop=stop, callbacks=callbacks, **kwargs
         )
 
+    @logos_shift()
     def _generate_with_cache(
         self,
         messages: List[BaseMessage],
@@ -510,6 +515,7 @@ class BaseChatModel(BaseLanguageModel[BaseMessage], ABC):
                 llm_cache.update(prompt, llm_string, result.generations)
                 return result
 
+    @logos_shift()
     async def _agenerate_with_cache(
         self,
         messages: List[BaseMessage],
